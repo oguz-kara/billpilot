@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			app: ['var(--font-geist)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+  		},
   		backgroundImage: {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
   			'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
@@ -19,6 +23,19 @@ const config: Config = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			'pq-canvas': '#ffffff',
+  			'pq-mist': '#f5f5f5',
+  			'pq-alt': '#fafafa',
+  			'pq-ash': '#e5e5e5',
+  			'pq-smoke': '#d4d4d4',
+  			'pq-ink': '#0a0a0a',
+  			'pq-charcoal': '#171717',
+  			'pq-slate': '#404040',
+  			'pq-fog': '#737373',
+  			'pq-silver': '#a3a3a3',
+  			'pq-blue': '#2563eb',
+  			'pq-sapphire': '#1e40af',
+  			'pq-lavender': '#7c3aed',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

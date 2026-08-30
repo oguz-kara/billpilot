@@ -1,0 +1,44 @@
+{
+  "id": "BillPilot0000001",
+  "name": "BillPilot — Invoice Intake",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "billpilot-invoice", "responseMode": "onReceived", "options": {} },
+      "id": "wh-1", "name": "Invoice Webhook (Gmail trigger in prod)",
+      "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "billpilot-invoice"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3001/api/extract",
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ file: $json.body.file }) }}",
+        "options": {}
+      },
+      "id": "ex-1", "name": "Extract + Validate (Claude)",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [ { "leftValue": "={{ $json.status }}", "rightValue": "review", "operator": { "type": "string", "operation": "equals" } } ],
+          "combinator": "and"
+        }, "options": {}
+      },
+      "id": "if-rev", "name": "Needs review?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [440, 0]
+    },
+    { "parameters": {}, "id": "noop-rev", "name": "Review queue (human, /invoices)", "type": "n8n-nodes-base.noOp", "typeVersion": 1, "position": [660, -100] },
+    { "parameters": {}, "id": "noop-ok", "name": "Ready → approval → QBO multi-line bill", "type": "n8n-nodes-base.noOp", "typeVersion": 1, "position": [660, 100] }
+  ],
+  "connections": {
+    "Invoice Webhook (Gmail trigger in prod)": { "main": [[ { "node": "Extract + Validate (Claude)", "type": "main", "index": 0 } ]] },
+    "Extract + Validate (Claude)": { "main": [[ { "node": "Needs review?", "type": "main", "index": 0 } ]] },
+    "Needs review?": { "main": [
+      [ { "node": "Review queue (human, /invoices)", "type": "main", "index": 0 } ],
+      [ { "node": "Ready → approval → QBO multi-line bill", "type": "main", "index": 0 } ]
+    ] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

@@ -38,14 +38,21 @@ kapanışında çift ödeme şikâyeti. Detaylar: Bölüm 11 §2.
 - [ ] Test setini 30 faturaya genişlet (taranmış görünümlü varyantlar dahil)
       — gerçek koşudan önce
 
-**v2 — inceleme UI + entegrasyon**
-- [ ] İnceleme ekranı: solda PDF (yan yana görüntüleyici — pdftochat
-      deseninden, kredilendirilir), sağda düzenlenebilir alan formu,
-      onayla/reddet
-- [ ] Prequal primitive dili (`components/ui.tsx` portu) + ledger estetiği
-- [ ] n8n: Gmail trigger → /api/extract → onay → QBO çok satırlı bill
-      (n8n stok QBO node'unun tek-satır kusurunu aşan HTTP çağrısı);
-      $2.000 üstü Slack onayı
+**v2 — inceleme UI + entegrasyon (2026-08-30 çekirdeği tamam)**
+- [x] İnceleme ekranı (`ProcessView`): solda PDF embed, sağda alanlar +
+      bayraklar + mülk-eşlemeli satır tablosu + Approve → QBO payload
+      görünümü (düzenlenebilir form alanları v2.1'e)
+- [x] Primitive dili portu (`components/bp/ui.tsx`): Shell, StatusChip,
+      Mono, MockChip — Prequal'le aynı ledger estetiği, açık tema
+- [x] `/invoices` sicil tablosu (satır → mülk kodları + bayraklar)
+- [x] `/api/approve` + `lib/qbo.ts`: çok satırlı Bill payload'u (satır
+      başına ClassRef=mülk kodu; stok n8n QBO node'unun tek-satır kusurunu
+      aşan yapı); gerçek POST QBO sandbox OAuth'la gelecek (simülasyon)
+- [x] n8n `billpilot.json` — **uçtan uca doğrulandı** (Docker import +
+      webhook → extract → store; GreenScape 3 mülke bölündü, tekrar
+      gönderim duplicate olarak yakalandı)
+- [ ] v2.1: inceleme formunda alan düzenleme; $2.000 üstü Slack onayı;
+      Gmail trigger'ın gerçek bağlanması
 - [ ] QBO sandbox entegrasyonu (Intuit developer hesabı — ücretsiz)
 
 **v3 — dashboard**

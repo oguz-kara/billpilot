@@ -2,14 +2,14 @@ import "./globals.css";
 import { Metadata } from "next";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "next-themes";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
-const geist = Geist({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ai-sdk-preview-pdf-support.vercel.app"),
-  title: "PDF Support Preview",
-  description: "Experimental preview of PDF support with the AI SDK",
+  title: "BillPilot — AI invoice processing for property managers",
+  description: "Extract, validate, allocate and approve vendor invoices into QuickBooks-ready multi-line bills.",
 };
 
 export default function RootLayout({
@@ -18,9 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geist.className}`}>
+    <html lang="en" suppressHydrationWarning className={`${geist.variable} ${geistMono.variable}`}>
       <body>
-        <ThemeProvider attribute="class" enableSystem forcedTheme="dark">
+        <ThemeProvider attribute="class" forcedTheme="light">
           <Toaster position="top-center" richColors />
           {children}
         </ThemeProvider>
