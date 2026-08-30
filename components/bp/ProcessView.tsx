@@ -29,40 +29,64 @@ interface Processed {
   processedAt: string;
 }
 
+interface QueueItem {
+  name: string;
+  url: string;
+  state: "pending" | "processing" | "done" | "error";
+  result?: Processed;
+  error?: string;
+}
+
 export default function ProcessView() {
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("");
+  const [queue, setQueue] = useState<QueueItem[]>([]);
   const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState<Processed | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
   const [qbo, setQbo] = useState<object | null>(null);
 
-  async function handleFile(file: File) {
-    if (file.type !== "application/pdf") return toast.error("PDF files only.");
+  const patch = (i: number, p: Partial<QueueItem>) =>
+    setQueue((q) => q.map((item, idx) => (idx === i ? { ...item, ...p } : item)));
+
+  async function handleFiles(files: FileList) {
+    const pdfs = [...files].filter((f) => f.type === "application/pdf");
+    if (pdfs.length === 0) return toast.error("PDF files only.");
+    const start = queue.length;
+    const items: QueueItem[] = pdfs.map((f) => ({
+      name: f.name,
+      url: URL.createObjectURL(f),
+      state: "pending",
+    }));
+    setQueue((q) => [...q, ...items]);
     setBusy(true);
-    setResult(null);
-    setQbo(null);
-    setFileName(file.name);
-    setPdfUrl(URL.createObjectURL(file));
-    try {
-      const buf = await file.arrayBuffer();
-      const base64 = btoa(new Uint8Array(buf).reduce((s, b) => s + String.fromCharCode(b), ""));
-      const res = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: { data: base64, name: file.name } }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? res.statusText);
-      setResult(data);
-    } catch (err) {
-      toast.error(String(err));
-    } finally {
-      setBusy(false);
+    for (let i = 0; i < pdfs.length; i++) {
+      const idx = start + i;
+      patch(idx, { state: "processing" });
+      try {
+        const buf = await pdfs[i].arrayBuffer();
+        const base64 = btoa(new Uint8Array(buf).reduce((s, b) => s + String.fromCharCode(b), ""));
+        const res = await fetch("/api/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file: { data: base64, name: pdfs[i].name } }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? res.statusText);
+        patch(idx, { state: "done", result: data });
+        setSelected(idx);
+        setQbo(null);
+      } catch (err) {
+        patch(idx, { state: "error", error: String(err) });
+      }
     }
+    setBusy(false);
   }
 
+  const current = selected !== null ? queue[selected] : null;
+  const result = current?.result ?? null;
+  const doneCount = queue.filter((q) => q.state === "done").length;
+  const reviewCount = queue.filter((q) => q.result?.status === "review").length;
+
   async function approve() {
-    if (!result) return;
+    if (!result || selected === null) return;
     const res = await fetch("/api/approve", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +94,7 @@ export default function ProcessView() {
     });
     const data = await res.json();
     if (!res.ok) return toast.error(data.error ?? res.statusText);
-    setResult({ ...result, status: "approved" });
+    patch(selected, { result: { ...result, status: "approved" } });
     setQbo(data.qbo);
     toast.success("Approved — QuickBooks bill built.");
   }
@@ -80,28 +104,73 @@ export default function ProcessView() {
       <Card className="mb-5">
         <CardBody className="flex flex-wrap items-center gap-3">
           <label className="inline-flex h-8 cursor-pointer items-center rounded-md border border-pq-ash bg-white px-3.5 text-[13px] font-medium text-pq-charcoal hover:bg-pq-mist">
-            {busy ? "Processing…" : "Choose PDF invoice"}
+            {busy ? `Processing ${doneCount + 1}/${queue.length}…` : "Choose PDF invoices"}
             <input
               type="file"
               accept="application/pdf"
+              multiple
               className="hidden"
               disabled={busy}
-              onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+              onChange={(e) => e.target.files?.length && handleFiles(e.target.files)}
             />
           </label>
           <span className="text-[12px] text-pq-fog">
-            Extract → validate the math → allocate lines to properties → approve into a QuickBooks bill. Sample
-            invoices: <Mono>data/invoices/</Mono> (run <Mono>npm run fixtures</Mono>).
+            Select a whole month of invoices at once — they queue up, each one extracted, validated and allocated.
+            In production the same pipeline runs off the ap@ inbox via n8n. Samples: <Mono>data/invoices/</Mono>.
           </span>
         </CardBody>
       </Card>
+
+      {queue.length > 0 && (
+        <Card className="mb-5">
+          <div className="flex items-center justify-between border-b border-pq-ash px-4 py-2 text-[12px] text-pq-fog">
+            <span>
+              <Mono>{doneCount}</Mono>/<Mono>{queue.length}</Mono> processed
+              {reviewCount > 0 && (
+                <>
+                  {" "}· <Mono>{reviewCount}</Mono> need review
+                </>
+              )}
+            </span>
+          </div>
+          <table className="w-full text-left text-[13px]">
+            <tbody>
+              {queue.map((item, i) => (
+                <tr
+                  key={`${item.name}-${i}`}
+                  onClick={() => item.state === "done" && (setSelected(i), setQbo(null))}
+                  className={`border-b border-pq-ash last:border-b-0 ${
+                    item.state === "done" ? "cursor-pointer hover:bg-pq-alt" : ""
+                  } ${selected === i ? "bg-pq-alt" : ""}`}
+                >
+                  <td className="px-4 py-1.5">
+                    <Mono className="text-pq-ink">{item.name}</Mono>
+                  </td>
+                  <td className="px-4 py-1.5">
+                    {item.state === "done" && item.result ? (
+                      <StatusChip status={item.result.status} />
+                    ) : item.state === "error" ? (
+                      <span className="text-[12px] text-[#c2410c]">{item.error}</span>
+                    ) : (
+                      <span className="text-[12px] text-pq-fog">{item.state}…</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-1.5 text-right text-[12px] text-pq-fog">
+                    {item.result ? <Mono>${item.result.invoice.total.toFixed(2)}</Mono> : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+      )}
 
       {result && (
         <div className="grid gap-5 lg:grid-cols-2">
           {/* left: the document */}
           <Card className="min-h-[480px] overflow-hidden">
-            {pdfUrl ? (
-              <embed src={pdfUrl} type="application/pdf" className="h-[560px] w-full" />
+            {current?.url ? (
+              <embed src={current.url} type="application/pdf" className="h-[560px] w-full" />
             ) : (
               <CardBody>PDF preview unavailable.</CardBody>
             )}
@@ -110,7 +179,7 @@ export default function ProcessView() {
           {/* right: extraction + checks */}
           <div>
             <div className="mb-3 flex flex-wrap items-center gap-3">
-              <Mono className="font-medium text-pq-ink">{fileName}</Mono>
+              <Mono className="font-medium text-pq-ink">{current?.name}</Mono>
               <StatusChip status={result.status} />
               {result.mock && <MockChip />}
               {result.status !== "approved" && (
