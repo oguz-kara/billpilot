@@ -1,0 +1,16 @@
+{
+  "_comment": "Kurgusal mülk yönetim şirketi: Northgate Property Management (40 bina). Satır kalemleri adres/birim metninden ya da vendor kuralından mülk koduna eşlenir.",
+  "properties": [
+    { "code": "NG-OAK-12", "name": "Oakwood Apartments", "address": "12 Oakwood Ave" },
+    { "code": "NG-ELM-08", "name": "Elm Street Complex", "address": "8 Elm St" },
+    { "code": "NG-MAP-23", "name": "Maple Court", "address": "23 Maple Ct" },
+    { "code": "NG-PIN-05", "name": "Pinehill Residences", "address": "5 Pinehill Rd" },
+    { "code": "NG-CED-17", "name": "Cedar Park Homes", "address": "17 Cedar Park Ln" },
+    { "code": "NG-BIR-30", "name": "Birchview Estate", "address": "30 Birchview Dr" }
+  ],
+  "vendorRules": [
+    { "vendorMatch": "GreenScape", "defaultSplit": ["NG-OAK-12", "NG-ELM-08", "NG-MAP-23"], "note": "Peyzaj sözleşmesi 3 mülkü kapsar; kalemler adrese göre dağıtılır" },
+    { "vendorMatch": "City Power", "propertyFromText": true, "note": "Elektrik faturaları hizmet adresinden eşlenir" },
+    { "vendorMatch": "AquaFlow Plumbing", "propertyFromText": true, "recoverable": true }
+  ]
+}

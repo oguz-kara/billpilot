@@ -1,41 +1,30 @@
-# AI SDK PDF Support Example
+# BillPilot
 
-This example demonstrates how to use the [AI SDK](https://sdk.vercel.ai/docs) with [Next.js](https://nextjs.org/) with the `useObject` hook to submit PDF messages to the AI provider of your choice (Google or Anthropic).
+**AI invoice processing for property managers.** Email a vendor PDF invoice;
+BillPilot extracts vendor, line items, tax and totals with Claude, validates
+that lines + tax equal the total, maps each line to a property, checks for
+duplicate payments, routes low-confidence extractions to a human review
+screen, and posts approved bills to QuickBooks Online as multi-line bills.
 
-## Deploy your own
+> Personal build. Built on [vercel-labs/ai-sdk-preview-pdf-support](https://github.com/vercel-labs/ai-sdk-preview-pdf-support)
+> (Apache-2.0) — I replaced the quiz flow with an invoice-extraction schema,
+> added validation, property allocation, duplicate detection, a review UI
+> (side-by-side viewer pattern credited to Nutlope/pdftochat) and the
+> n8n → QuickBooks pipeline. Demo data is fictional.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-pdf-support&env=GOOGLE_API_KEY&envDescription=API%20keys%20needed%20for%20application&envLink=google.com)
+## Why
 
-## How to use
+Off-the-shelf tools (Hubdoc, Dext) read invoice headers but can't split one
+landscaper's invoice across six properties, extract tax codes, or block a
+duplicate payment. n8n's stock QuickBooks node writes single-line bills only.
+BillPilot fills exactly that gap.
 
-Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+## Status
 
-```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-pdf-support ai-sdk-preview-pdf-support-example
-```
+Skeleton — see `docs/spec.md` for scope and the measurement protocol.
+No client-outcome numbers are claimed; the "Measured" section will carry only
+metrics from this repo's own labeled test runs.
 
-```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-pdf-support ai-sdk-preview-pdf-support-example
-```
+## License
 
-```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-pdf-support ai-sdk-preview-pdf-support-example
-```
-
-To run the example locally you need to:
-
-1. Sign up for accounts with the AI providers you want to use (e.g., Google).
-2. Obtain API keys for Google provider.
-3. Set the required environment variables as shown in the `.env.example` file, but in a new file called `.env`.
-4. `npm install` to install the required dependencies.
-5. `npm run dev` to launch the development server.
-
-
-## Learn More
-
-To learn more about Vercel AI SDK or Next.js take a look at the following resources:
-
-- [AI SDK docs](https://sdk.vercel.ai/docs)
-- [Vercel AI Playground](https://play.vercel.ai)
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-
+Apache-2.0 — see [LICENSE](LICENSE). Original work (c) Vercel; modifications (c) Oguz Kara.
