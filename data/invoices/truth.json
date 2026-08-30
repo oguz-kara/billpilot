@@ -1,0 +1,93 @@
+{
+  "greenscape-2081.pdf": {
+    "vendor": "GreenScape Landscaping LLC",
+    "invoiceNumber": "GS-2081",
+    "invoiceDate": "2026-08-04",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Monthly grounds maintenance — 12 Oakwood Ave",
+        "serviceAddress": "12 Oakwood Ave",
+        "amount": 640
+      },
+      {
+        "description": "Monthly grounds maintenance — 8 Elm St",
+        "serviceAddress": "8 Elm St",
+        "amount": 580
+      },
+      {
+        "description": "Hedge trimming — 23 Maple Ct",
+        "serviceAddress": "23 Maple Ct",
+        "amount": 210
+      }
+    ],
+    "tax": 114.4,
+    "total": 1544.4
+  },
+  "citypower-448213.pdf": {
+    "vendor": "City Power & Utilities",
+    "invoiceNumber": "CP-448213",
+    "invoiceDate": "2026-08-09",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Electricity service 07/01–07/31, meter 4471 — 5 Pinehill Rd",
+        "serviceAddress": "5 Pinehill Rd",
+        "amount": 1284.5
+      }
+    ],
+    "tax": 0,
+    "total": 1284.5
+  },
+  "aquaflow-771.pdf": {
+    "vendor": "AquaFlow Plumbing Co",
+    "invoiceNumber": "AF-771",
+    "invoiceDate": "2026-08-12",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Emergency leak repair, unit 3B — 17 Cedar Park Ln",
+        "serviceAddress": "17 Cedar Park Ln",
+        "amount": 425
+      },
+      {
+        "description": "Water heater inspection — 30 Birchview Dr",
+        "serviceAddress": "30 Birchview Dr",
+        "amount": 150
+      }
+    ],
+    "tax": 46,
+    "total": 641
+  },
+  "brightclean-1190.pdf": {
+    "vendor": "BrightClean Janitorial",
+    "invoiceNumber": "BC-1190",
+    "invoiceDate": "2026-08-15",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Common area cleaning, weekly x4",
+        "serviceAddress": null,
+        "amount": 880
+      }
+    ],
+    "tax": 70.4,
+    "total": 950.4,
+    "_mockConfidence": 0.72
+  },
+  "citypower-448213-copy.pdf": {
+    "vendor": "City Power & Utilities",
+    "invoiceNumber": "CP-448213",
+    "invoiceDate": "2026-08-09",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Electricity service 07/01–07/31, meter 4471 — 5 Pinehill Rd",
+        "serviceAddress": "5 Pinehill Rd",
+        "amount": 1284.5
+      }
+    ],
+    "tax": 0,
+    "total": 1284.5
+  }
+}

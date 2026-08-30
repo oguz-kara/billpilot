@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "fixtures": "tsx scripts/make-fixtures.mts",
+    "batch": "tsx --env-file=.env.local scripts/batch.mts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.0.5",
@@ -39,8 +41,10 @@
     "@types/react-dom": "^19.0.2",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.5.8",
+    "pdf-lib": "^1.17.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
+    "tsx": "^4.23.13",
     "typescript": "^5.7.2"
   }
 }

@@ -22,20 +22,21 @@ kapanışında çift ödeme şikâyeti. Detaylar: Bölüm 11 §2.
 
 ## Kapsam
 
-**v1 — çıkarım çekirdeği**
-- [ ] `lib/schemas.ts`: quiz şeması → fatura şeması (`vendor, invoiceNo,
-      date, currency, lineItems[{description, amount, propertyCode?}],
-      tax, total`)
-- [ ] `/api/extract`: Claude native PDF → streamObject; model
-      `BILLPILOT_MODEL ?? claude-sonnet-5`
-- [ ] Doğrulama katmanı: **Σ(kalemler)+vergi = toplam** kontrolü; güven
-      <0.85 → inceleme kuyruğu; tutmayan bayraklanır
-- [ ] Mülk eşleme: `data/properties.json` adres/vendor kurallarıyla satır
-      başına propertyCode
-- [ ] Çift ödeme kontrolü: vendor+invoiceNo+total son 90 gün (store)
-- [ ] Mock modu `BILLPILOT_MOCK=1` (Prequal deseni; MOCK etiketi, ölçüme
-      girmez)
-- [ ] Store v1: `data/out/invoices.json` (Prequal deseni; Postgres v2)
+**v1 — çıkarım çekirdeği (2026-08-30 tamamlandı, mock'ta uçtan uca doğrulandı)**
+- [x] `lib/schemas.ts`: fatura şeması (vendor, invoiceNumber, date, currency,
+      lineItems[{description, serviceAddress, amount}], tax, total,
+      confidence — model öz-değerlendirmesi)
+- [x] `/api/extract` + `lib/extract.ts`: Claude native PDF → generateObject;
+      model `BILLPILOT_MODEL ?? claude-sonnet-5`
+- [x] `lib/validate.ts`: Σ kontrolü (±0.01) · güven <0.85 → kuyruk ·
+      mülk eşleme (satır adresi → açıklama metni → vendor default split) ·
+      çift ödeme (vendor+no+total, 90 gün) → status: approved-pending/review
+- [x] Mock modu `BILLPILOT_MOCK=1`: fixture'larda ground truth döner
+- [x] Store v1 + `npm run fixtures` (5 kurgusal PDF + truth.json; kasıtlı:
+      1 bozuk toplam, 1 düşük güven/adressiz, 1 kopya) + `npm run batch`
+      (alan doğruluğu, yakalama sayıları, kuyruk oranı ölçümü)
+- [ ] Test setini 30 faturaya genişlet (taranmış görünümlü varyantlar dahil)
+      — gerçek koşudan önce
 
 **v2 — inceleme UI + entegrasyon**
 - [ ] İnceleme ekranı: solda PDF (yan yana görüntüleyici — pdftochat
