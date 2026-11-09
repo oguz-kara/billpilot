@@ -27,12 +27,3 @@ export const invoiceSchema = z.object({
 
 export type LineItem = z.infer<typeof lineItemSchema>;
 export type Invoice = z.infer<typeof invoiceSchema>;
-
-// ---- legacy quiz schema (base repo demo, /api/generate-quiz still uses it) ----
-export const questionSchema = z.object({
-  question: z.string(),
-  options: z.array(z.string()).length(4),
-  answer: z.enum(["A", "B", "C", "D"]),
-});
-export type Question = z.infer<typeof questionSchema>;
-export const questionsSchema = z.array(questionSchema).length(4);
