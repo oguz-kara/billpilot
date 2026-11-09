@@ -37,3 +37,12 @@ next-env.d.ts
 
 # BillPilot
 data/out/
+
+# GitHub prep
+dist
+.turbo
+.env
+.env.*
+!.env.example
+*.key
+*.log

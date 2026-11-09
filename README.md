@@ -1,3 +1,5 @@
+Demo project built to show what I can build. Not a client project.
+
 # BillPilot
 
 **AI invoice processing for property managers.** Email a vendor PDF invoice;
