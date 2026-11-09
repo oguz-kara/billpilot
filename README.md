@@ -23,7 +23,11 @@ BillPilot fills exactly that gap.
 
 ## Status
 
-Skeleton — see `docs/spec.md` for scope and the measurement protocol.
+v1 demo. Extraction, the sum and duplicate checks, property mapping, the review
+screen and the QuickBooks bill payload run end to end in mock mode on five
+test invoices, and through an n8n workflow. QuickBooks posting is simulated
+until a sandbox account is connected. Next: a 30-invoice labeled test set and
+a real run; see `docs/spec.md` for scope and the measurement protocol.
 No client-outcome numbers are claimed; the "Measured" section will carry only
 metrics from this repo's own labeled test runs.
 
